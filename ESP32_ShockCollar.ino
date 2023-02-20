@@ -41,37 +41,22 @@ void setup() {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send(200, "text/html", \
       "<head>\n\
-      <meta name='viewport' content='width=device-width, initial-scale=1' charset='UTF-8'>\n\
-      </head>\n\
-      <body bgcolor='black' text='white'>\n\
-      <center><font size=7>🦊</font><br>\n\
-      <select name='action' id='action'>\n\
-        <option value='0'>Shock</option>\n\
-        <option value='1' selected='selected'>Vibrate</option>\n\
-        <option value='2'>Sound</option>\n\
-      </select><br>\n\
-      <input type='range' min='1' max='100' value='50' class='slider' id='myRange'><br>\n\
-      <span id='demo'></span><br>\n\
-      <button type='button' onclick='submit()' value='OK'>OK</button>\n\
-      </body>\n\
-      <script>\n\
-      var slider = document.getElementById('myRange');\n\
-      var output = document.getElementById('demo');\n\
-      output.innerHTML = slider.value;\n\
-      slider.oninput = function() {\n\
-      output.innerHTML = this.value;\n\
-      }\n\
-      function submit() {\n\
-        fetch('/', {\n\
-          method: 'POST',\n\
-          headers: {\n\
-            'Accept': 'application/x-www-form-urlencoded',\n\
-            'Content-Type': 'application/x-www-form-urlencoded'\n\
-          },\n\
-          body: 'i=' + slider.value + '&type=' + action.value\n\
-        })\n\
-      }\n\
-      </script>");
+<meta name='viewport' content='width=device-width, initial-scale=1' charset='UTF-8'>\n\
+<title>meep chock</title>\n\
+</head>\n\
+<body bgcolor='black' text='white'>\n\
+<center>\n\
+<font size=7>🦊</font><br>\n\
+<select name='action' id='action' onchange='return_to_last_value()'>\n\
+<option value='0'>Shock</option>\n\
+<option value='1' selected='selected'>Vibrate</option>\n\
+<option value='2'>Sound</option>\n\
+</select><br>\n\
+<input type='range' min='1' max='100' value='50' class='slider' id='myRange'><br>\n\
+<span id='demo'></span><br>\n\
+<button type='button' onclick='submit()' value='OK'>OK</button>\n\
+</body>\n\
+<script>/*<![CDATA[*/var shock_value=0;var vibrate_value=0;var sound_value=0;var option=document.getElementById("action");var slider=document.getElementById("myRange");var output=document.getElementById("demo");output.innerHTML=slider.value;slider.oninput=function(){if(option.value==0){shock_value=this.value}if(option.value==1){vibrate_value=this.value}if(option.value==2){sound_value=this.value}output.innerHTML=this.value};function submit(){fetch("/",{method:"POST",headers:{Accept:"application/x-www-form-urlencoded","Content-Type":"application/x-www-form-urlencoded"},body:"i="+slider.value+"&type="+action.value})}function return_to_last_value(){if(option.value==0){set_slider_value(shock_value);return}if(option.value==1){set_slider_value(vibrate_value);return}if(option.value==2){set_slider_value(sound_value);return}}function set_slider_value(a){slider.value=a;output.innerHTML=a};/*]]>*/</script>");
     });
     
     server.on("/", HTTP_POST, [](AsyncWebServerRequest *request){
@@ -150,6 +135,7 @@ void startSequenzPt2() {
   int arr[] = {725, 231, 723, 230, 249, 720, 722, 231, 233, 720, 233, 720, 723, 231, 233, 719, 237, 719, 723, 231, 722, 231, 722, 231, 233, 731, 233, 719, 723, 230, 723, 231, 236, 720};
   command(arr, (sizeof(arr) / sizeof(int)));
 }
+
 void endSequenz() {
   int arr[] = {723, 230, 723, 231, 722, 231, 722, 231, 233, 720, 232};
   command(arr, (sizeof(arr) / sizeof(int)));
