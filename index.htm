@@ -22,14 +22,16 @@
                     style="color: var(--bs-body-color); background-color: var(--bs-tertiary-bg);" onchange='return_to_last_value()'>
                     <option value='0'>Shock</option>
                     <option value='1' selected='selected'>Vibrate</option>
-                    <option value='2'>Sound</option>
                 </select>
                 <br>
                 <input type='range' min='1' max='100' value='50' class='form-range' id='myRange'>
                 <br>
                 <div id='demo' style="text-align: center; font-family: 'Segment7Standard'; font-size: 42px;"></div>
                 <br>
-                <button type="button" class="btn btn-danger" onclick='submit()' value='OK' id="sendbutton" disabled>SEND</button>
+                <button type="button" class="btn btn-danger" onclick='submit(0)' value='OK' id="sendbutton" disabled>SEND</button>
+            </div>
+            <div style="margin-top: 1cm; text-align: right;">
+                <button id="soundbutton" type="button" class="btn btn-secondary" onclick='submit(1)' style="font-size: 28px; padding:5px">🕩</button>
             </div>
         </div>
     </main>
@@ -68,7 +70,7 @@
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 expires = "; expires=" + date.toUTCString();
             }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+            document.cookie = name + "=" + (value || "") + expires + "; path=/" + "; SameSite=Strict";
         }
         function getCookie(name) {
             var nameEQ = name + "=";
@@ -88,17 +90,14 @@
         // Initialization Code
         var shock_value = 1;
         var vibrate_value = 1;
-        var sound_value = 1;
         if (getCookie("shock_value") === null
-            || getCookie("vibrate_value") === null
-            || getCookie("sound_value") === null) {
+            || getCookie("vibrate_value") === null) 
+        {
             setCookie("shock_value", shock_value, 3);
             setCookie("vibrate_value", vibrate_value, 3);
-            setCookie("sound_value", sound_value, 3);
         } else {
             shock_value = getCookie("shock_value");
             vibrate_value = getCookie("vibrate_value");
-            sound_value = getCookie("sound_value");
         }
         safeswitch.checked = true // Return to safe on page reload
         return_to_last_value()
@@ -117,20 +116,23 @@
                 vibrate_value = this.value;
                 setCookie("vibrate_value", vibrate_value, 3)
             }
-            if (option.value == 2) {
-                sound_value = this.value;
-                setCookie("sound_value", sound_value, 3)
-            }
             output.innerHTML = this.value;
         }
-        function submit() {
+        function submit(x) {
+            var t = action.value
+            var v = slider.value
+            if ( x == 1 ) { // Condition for sound signal
+                v = 20 // Value of sound signal: 20. Doesn't make a difference
+                t = 2
+            }
+            // console.log('POST ' + 'i=' + v + '&type=' + t)
             fetch('/', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/x-www-form-urlencoded',
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: 'i=' + slider.value + '&type=' + action.value
+                body: 'i=' + v + '&type=' + t
             });
         }
         function return_to_last_value() {
@@ -140,10 +142,6 @@
             }
             if (option.value == 1) {
                 set_slider_value(vibrate_value);
-                return;
-            }
-            if (option.value == 2) {
-                set_slider_value(sound_value);
                 return;
             }
         }
