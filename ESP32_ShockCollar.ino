@@ -174,25 +174,22 @@ void execute(int i, int type) {
   digitalWrite(LED_BUILTIN, HIGH);
   startSequenzPt1();
   switch (type) {
-    case (0):
-      _shock1();
-      intermezo(i);
-      _shock2();
-      break;
-    case (1):
-      _vibrate1();
-      intermezo(i);
-      _vibrate2();
-      break;
-    case (2):
+    case (sound):
       _sound1();
       intermezo(0);
       _sound2();
       break;
-    default:
+    case (shock):
       _shock1();
       intermezo(i);
       _shock2();
+      break;    
+    case (vibrate):
+    default:
+      _vibrate1();
+      intermezo(i);
+      _vibrate2();
+      break;
   }
   endSequenz();
   digitalWrite(txrfpin, 0);
