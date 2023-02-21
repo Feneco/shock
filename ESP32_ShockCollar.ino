@@ -14,7 +14,6 @@ AsyncWebServer server(80);
 #define sound   2
 
 //esp32
-#define bootpin      0
 #define txrfpin     13
 #define LED_BUILTIN  2
 
@@ -49,36 +48,29 @@ void setup() {
       int paramsNr = request->params();
       String pwr;
       String type;
-      for(int i=0; i<paramsNr; i++) {
+      for(int i=0;i<paramsNr;i++){
           AsyncWebParameter* p = request->getParam(i);
           if(p->name() == "i"){
             pwr = p->value();
-            continue;
           }
-          else if(p->name() == "type"){
+          if(p->name() == "type"){
             type = p->value();
-            continue;
-          } else {
-            request->send(400, "text/plain", "Wrong Request");
-            return
           }
       }
-      if(Serial) {
-        switch (type.toInt()) {
-          case (0):
-            Serial.println("SHOCK " + (String)pwr.toInt());
-            break;
-          case (1):
-            Serial.println("VIBRATE " + (String)pwr.toInt());
-            break;
-          case (2):
-            Serial.println("SOUND " + (String)pwr.toInt());
-            break;
-          default:
-            Serial.println("SHOCK " + (String)pwr.toInt());
-        }
+      switch (type.toInt()) {
+        case (0):
+          Serial.println("SHOCK " + (String)pwr.toInt());
+          break;
+        case (1):
+          Serial.println("VIBRATE " + (String)pwr.toInt());
+          break;
+        case (2):
+          Serial.println("SOUND " + (String)pwr.toInt());
+          break;
+        default:
+          Serial.println("SHOCK " + (String)pwr.toInt());
       }
-      for(int i=0; i<5; i++){
+      for(int i=0;i<5;i++){
         execute(pwr.toInt(), type.toInt());
       }
       request->send(200, "text/plain", "OK");
@@ -87,7 +79,7 @@ void setup() {
 }
 
 void loop() {
-  if(!digitalRead(bootpin)){  //if BOOT button pressed
+  if(!digitalRead(0)){  //if BOOT button pressed
     Serial.println("Resetting WiFi...");
     wm.resetSettings(); //reset wifi credentials
     ESP.restart();      //restart the board
@@ -101,66 +93,74 @@ String ipToString(IPAddress ip){
   return s;
 }
 
-void command(const uint8_t* msg, const uint8_t& _size) {
-  for (uint8_t c = _size - 1; c > -1; c--){
-    for (uint8_t i = 0; i < size(uint8_t); i++) {
-      digitalWrite(txrfpin, (msg[c] & (0b1 << i)) != 0);
-      delayMicroseconds(233);
-    }
+void int_to_bin_digit(unsigned int in, int count, int* out)
+{
+  unsigned int mask = 1U << (count - 1);
+  int i;
+  for (i = 0; i < count; i++) {
+    out[i] = (in & mask) ? 1 : 0;
+    in <<= 1;
   }
-  digitalWrite(txrfpin, 0);
+}
+
+void command(int arr[], int _size) {
+  bool b = true;
+  for (int i = 0; i < _size; i++) {
+    digitalWrite(txrfpin, b); delayMicroseconds(arr[i]);
+    b = !b;
+  }
 }
 
 void startSequenzPt1() {
-  uint8_t arr[] = {0x2, 0x22, 0x2e, 0x3f};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {1472, 730, 725, 231, 233, 720, 233, 720, 233, 719, 233, 720};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 
 void startSequenzPt2() {
-  uint8_t arr[] = {0x1, 0x77, 0x11, 0x77, 0x71, 0x17, 0x11, 0x71, 0x77};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {725, 231, 723, 230, 249, 720, 722, 231, 233, 720, 233, 720, 723, 231, 233, 719, 237, 719, 723, 231, 722, 231, 722, 231, 233, 731, 233, 719, 723, 230, 723, 231, 236, 720};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
-
 void endSequenz() {
-  uint8_t arr[] = {0x11, 0x77, 0x77};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {723, 230, 723, 231, 722, 231, 722, 231, 233, 720, 232};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 
 void _shock1() {
-  uint8_t arr[] = {0x7, 0x11};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {233, 719, 234, 719, 723, 231};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 
 void _shock2() {
-  uint8_t arr[] = {0x7, 0x71};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {237, 719, 723, 231, 722, 231};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 void _vibrate1() {
-  uint8_t arr[] = {0x1, 0x71};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {233, 719, 722, 231, 233, 719};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 
 void _vibrate2() {
-  uint8_t arr[] = {0x7, 0x17};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {725, 231, 233, 719, 722, 231};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 
 void _sound1() {
-  uint8_t arr[] = {0x1, 0x17};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {723, 230, 233, 720, 233, 719};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 
 void _sound2() {
-  uint8_t arr[] = {0x1, 0x77};
-  command(arr, (sizeof(arr) / sizeof(uint8_t)));
+  int arr[] = {725, 231, 722, 231, 233, 719};
+  command(arr, (sizeof(arr) / sizeof(int)));
 }
 
-void executeTaskWithStrength(const int& s) {
-  for (int i = 7; i >= 0; i--)
+void executeTaskWithStrength(int i) {
+  int digit[7];
+  int_to_bin_digit(i, 7, digit);
+  for (int i = 0; i < 7; i++)
   {
-    uint8_t v = (s & (0x1 << i))
-    digitalWrite(txrfpin, 1); delayMicroseconds((v == 0) ? 233 : 730);
-    digitalWrite(txrfpin, 0); delayMicroseconds((v != 0) ? 233 : 730);
+    digitalWrite(txrfpin, 1); delayMicroseconds((digit[i] == 0) ? 230 : 730);
+    digitalWrite(txrfpin, 0); delayMicroseconds((digit[i] == 0) ? 730 : 230);
   }
 }
 
@@ -173,22 +173,25 @@ void execute(int i, int type) {
   digitalWrite(LED_BUILTIN, HIGH);
   startSequenzPt1();
   switch (type) {
-    case (sound):
-      _sound1();
-      intermezo(0);
-      _sound2();
-      break;
-    case (shock):
+    case (0):
       _shock1();
       intermezo(i);
       _shock2();
-      break;    
-    case (vibrate):
-    default:
+      break;
+    case (1):
       _vibrate1();
       intermezo(i);
       _vibrate2();
       break;
+    case (2):
+      _sound1();
+      intermezo(0);
+      _sound2();
+      break;
+    default:
+      _shock1();
+      intermezo(i);
+      _shock2();
   }
   endSequenz();
   digitalWrite(txrfpin, 0);
