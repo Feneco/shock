@@ -41,7 +41,7 @@ void setup() {
     }
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-      request->send(200, "text/html", htm);
+      request->send(200, "text/html", str(Document::html));
     });
     
     server.on("/", HTTP_POST, [](AsyncWebServerRequest *request){
