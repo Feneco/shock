@@ -11,15 +11,15 @@
 
 <body id='main_body' data-bs-theme="dark">
     <main>
-        <div class="container-md" style="text-align: center; max-width: 14cm;">
+        <div class="container-md" style="text-align: center; max-width: 14cm; margin-top: 1cm">
+            <div class="form-check form-switch" style="text-align: left;">
+                <input class="form-check-input" type="checkbox" role="switch" id="safemode" onchange="safemodechange()" checked>
+                <label class="form-check-label" for="safemode">Safe mode</label>
+            </div>                  
             <div class="display-1">🦊</div>
             <div>
-                <div class="form-check form-switch" style="text-align: left;">
-                    <input class="form-check-input" type="checkbox" role="switch" id="safemode" onchange="safemodechange()" checked>
-                    <label class="form-check-label" for="safemode">Safe mode</label>
-                </div>                  
                 <select name='action' class="form-select form-select-lg mb-3" id='action'
-                    onchange='return_to_last_value()'>
+                    style="color: var(--bs-body-color); background-color: var(--bs-tertiary-bg);" onchange='return_to_last_value()'>
                     <option value='0'>Shock</option>
                     <option value='1' selected='selected'>Vibrate</option>
                     <option value='2'>Sound</option>
@@ -35,11 +35,11 @@
     </main>
     <footer style="position:fixed;bottom: 0;left: 0;right: 0;">
         <div>
-            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#options" aria-expanded="false">
+            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#options" aria-expanded="false" style="border-radius: 10px 10px 0px 0px;">
                 ⚙️
             </button>
         </div>
-        <div id="options" class="collapse" style="padding: 20px; background: var(--bs-tertiary-bg);">
+        <div id="options" class="collapse" style="padding: 20px; background: var(--bs-tertiary-color);">
             <div>
                 <input type="radio" name="color_theme" id="dark_theme" value="dark" onchange="sel_theme()"
                     checked="checked">
