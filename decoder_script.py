@@ -1,6 +1,18 @@
 # this code is used to optimize the rainbow code tables used in esp32_shockcollar.ino
 # by reverse engineering the sent signals
 
+def call_g(l):
+    s = ""
+    for i in l:
+        if i < 500:
+            s += "s, "
+        elif i >= 500 and i< 1000:
+            s += "m, "
+        elif i >= 1000:
+            s += "l, "
+    print(s)
+
+
 def call_s(l):
     s = ""
     b = True
@@ -23,6 +35,16 @@ vibrate1 = [233, 719, 722, 231, 233, 719]
 vibrate2 = [725, 231, 233, 719, 722, 231]
 sound1 = [723, 230, 233, 720, 233, 719]
 sound2 = [725, 231, 722, 231, 233, 719]
+
+call_g(startSequenzPt1)
+call_g(startSequenzPt2)
+call_g(endSequenz)
+call_g(shock1)
+call_g(shock2)
+call_g(vibrate1)
+call_g(vibrate2)
+call_g(sound1)
+call_g(sound2)
 
 print(len(startSequenzPt1))
 print(len(startSequenzPt2))
