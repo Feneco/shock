@@ -48,29 +48,36 @@ void setup() {
       int paramsNr = request->params();
       String pwr;
       String type;
-      for(int i=0;i<paramsNr;i++){
+      for(int i=0; i<paramsNr; i++) {
           AsyncWebParameter* p = request->getParam(i);
           if(p->name() == "i"){
             pwr = p->value();
+            continue;
           }
-          if(p->name() == "type"){
+          else if(p->name() == "type"){
             type = p->value();
+            continue;
+          } else {
+            request->send(400, "text/plain", "Wrong Request");
+            return
           }
       }
-      switch (type.toInt()) {
-        case (0):
-          Serial.println("SHOCK " + (String)pwr.toInt());
-          break;
-        case (1):
-          Serial.println("VIBRATE " + (String)pwr.toInt());
-          break;
-        case (2):
-          Serial.println("SOUND " + (String)pwr.toInt());
-          break;
-        default:
-          Serial.println("SHOCK " + (String)pwr.toInt());
+      if(Serial) {
+        switch (type.toInt()) {
+          case (0):
+            Serial.println("SHOCK " + (String)pwr.toInt());
+            break;
+          case (1):
+            Serial.println("VIBRATE " + (String)pwr.toInt());
+            break;
+          case (2):
+            Serial.println("SOUND " + (String)pwr.toInt());
+            break;
+          default:
+            Serial.println("SHOCK " + (String)pwr.toInt());
+        }
       }
-      for(int i=0;i<5;i++){
+      for(int i=0; i<5; i++){
         execute(pwr.toInt(), type.toInt());
       }
       request->send(200, "text/plain", "OK");
