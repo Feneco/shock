@@ -11,9 +11,13 @@
 
 <body id='main_body' data-bs-theme="dark">
     <main>
-        <center>
-            <font size=7>🦊</font><br>
-            <div style="width: 80%; max-width: 10cm; min-width: 4cm;">
+        <div class="container-md" style="text-align: center; max-width: 14cm;">
+            <div class="display-1">🦊</div>
+            <div>
+                <div class="form-check form-switch" style="text-align: left;">
+                    <input class="form-check-input" type="checkbox" role="switch" id="safemode" onchange="safemodechange()" checked>
+                    <label class="form-check-label" for="safemode">Safe mode</label>
+                </div>                  
                 <select name='action' class="form-select form-select-lg mb-3" id='action'
                     onchange='return_to_last_value()'>
                     <option value='0'>Shock</option>
@@ -23,15 +27,15 @@
                 <br>
                 <input type='range' min='1' max='100' value='50' class='form-range' id='myRange'>
                 <br>
-                <span id='demo' style="text-align: left; font-family: 'Segment7Standard'; font-size: 42px;"></span>
+                <div id='demo' style="text-align: center; font-family: 'Segment7Standard'; font-size: 42px;"></div>
                 <br>
-                <button type="button" class="btn btn-danger" onclick='submit()' value='OK'>SEND</button>
+                <button type="button" class="btn btn-danger" onclick='submit()' value='OK' id="sendbutton" disabled>SEND</button>
             </div>
-        </center>
+        </div>
     </main>
     <footer style="position:fixed;bottom: 0;left: 0;right: 0;">
         <div>
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#options" aria-expanded="false">
+            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#options" aria-expanded="false">
                 ⚙️
             </button>
         </div>
@@ -53,6 +57,8 @@
         const slider = document.getElementById('myRange');
         const output = document.getElementById('demo');
         const options = document.getElementById('options');
+        const safeswitch = document.getElementById('safemode');
+        const sendbutton = document.getElementById('sendbutton');
         output.innerHTML = slider.value;
 
         function setCookie(name, value, days) {
@@ -94,10 +100,14 @@
             vibrate_value = getCookie("vibrate_value");
             sound_value = getCookie("sound_value");
         }
+        safeswitch.checked = true // Return to safe on page reload
         return_to_last_value()
         sel_theme()
         // ******************************************
 
+        function safemodechange(){
+            sendbutton.disabled = safeswitch.checked
+        }
         slider.oninput = function () {
             if (option.value == 0) {
                 shock_value = this.value;
