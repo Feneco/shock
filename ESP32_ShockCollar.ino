@@ -14,6 +14,7 @@ AsyncWebServer server(80);
 #define sound   2
 
 //esp32
+#define bootpin      0
 #define txrfpin     13
 #define LED_BUILTIN  2
 
@@ -86,7 +87,7 @@ void setup() {
 }
 
 void loop() {
-  if(!digitalRead(0)){  //if BOOT button pressed
+  if(!digitalRead(bootpin)){  //if BOOT button pressed
     Serial.println("Resetting WiFi...");
     wm.resetSettings(); //reset wifi credentials
     ESP.restart();      //restart the board
