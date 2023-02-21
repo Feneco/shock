@@ -78,10 +78,14 @@
             document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         }
 
+        // ******************************************
+        // Initialization Code
         var shock_value = 1;
         var vibrate_value = 1;
         var sound_value = 1;
-        if (!(getCookie("shock_value") || getCookie("vibrate_value") || getCookie("sound_value"))) {
+        if (getCookie("shock_value") === null
+            || getCookie("vibrate_value") === null
+            || getCookie("sound_value") === null) {
             setCookie("shock_value", shock_value, 3);
             setCookie("vibrate_value", vibrate_value, 3);
             setCookie("sound_value", sound_value, 3);
@@ -91,6 +95,8 @@
             sound_value = getCookie("sound_value");
         }
         return_to_last_value()
+        sel_theme()
+        // ******************************************
 
         slider.oninput = function () {
             if (option.value == 0) {
